@@ -1,14 +1,16 @@
-# Devedores 5.3 — Modo Fácil
+# Devedores 5.4 — Fácil e confortável
 
-Interface redesenhada para uso simples, com botões grandes, textos claros e fluxo direto.
+Interface focada em uso simples: números com mais espaço, telas protegidas contra barras do Android, botões maiores, cores claras e ações diretas.
 
 ## Principais melhorias
-- Tela inicial simplificada
-- Ações grandes: Novo cliente, Receber pagamento, Clientes e Calendário
-- Mensagens mais fáceis de entender
-- Acesso direto a Fotos, Documentos, Novo empréstimo e Registrar pagamento
-- Campos e botões com toque maior
-- Mantém salvamento automático, pastas, imagens, documentos e alarmes nativos
+- Números e valores financeiros com font padding para evitar cortes na parte inferior.
+- Área inferior e superior reforçada para barras de status/navegação e aparelhos com recorte.
+- Paleta clara com azul, verde, roxo, laranja e vermelho para identificar ações e status.
+- Botões maiores e mais fáceis de tocar.
+- Campos com texto escuro e contraste mais alto.
+- Ação Receber escolhe o cliente e abre diretamente o recebimento.
+- Botão Clientes rola automaticamente até a lista.
+- Mantém fotos, câmera, documentos, pastas, empréstimos, pagamentos, alarmes, notificações e salvamento automático.
 
 ## Compilação
-Use o GitHub Actions incluído em `.github/workflows/android.yml`.
+Use o workflow incluído em `.github/workflows/android.yml`.

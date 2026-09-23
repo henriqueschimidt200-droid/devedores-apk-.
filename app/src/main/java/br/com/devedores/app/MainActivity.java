@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MainActivity extends Activity {
-    DataStore ds; LinearLayout root, clientList; EditText search; int filterIndex=0;
+    DataStore ds; LinearLayout root, clientList; EditText search; ScrollView scroll; int filterIndex=0;
 
     @Override public void onCreate(Bundle b){
         super.onCreate(b); ds=new DataStore(this); requestNotif(); build();
@@ -24,14 +24,14 @@ public class MainActivity extends Activity {
     }
     void requestNotif(){ if(Build.VERSION.SDK_INT>=33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED) requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},77); }
     @Override protected void onResume(){super.onResume();if(ds!=null){ds.load();if(root!=null)render();AlarmScheduler.rescheduleAll(this);}}
-    void build(){root=Ui.col(this);ScrollView sc=new ScrollView(this);sc.setFillViewport(true);sc.setVerticalScrollBarEnabled(false);sc.addView(root);setContentView(sc);Ui.applySystemBars(this,root);}
+    void build(){root=Ui.col(this);ScrollView sc=new ScrollView(this);sc.setFillViewport(true);sc.setVerticalScrollBarEnabled(false);sc.addView(root);scroll=sc;setContentView(sc);Ui.applySystemBars(this,root);}
     String money(double x){return String.format(Locale.getDefault(),"R$ %.2f",x);}
 
     void render(){root.removeAllViews();header();mainCard();quickActions();importantToday();clientsSection();nextPayments();moreSection();}
 
     void header(){
         LinearLayout r=Ui.row(this); TextView brand=Ui.iconBadge(this,"D"); r.addView(brand,new LinearLayout.LayoutParams(Ui.dp(this,52),Ui.dp(this,52))); Ui.gap(this,r,10);
-        LinearLayout t=Ui.col(this);t.setPadding(0,0,0,0);t.addView(Ui.title(this,"Devedores",26));t.addView(Ui.label(this,"Bem-vinda! Vamos deixar tudo simples."));r.addView(t,new LinearLayout.LayoutParams(0,Ui.dp(this,58),1));
+        LinearLayout t=Ui.col(this);t.setPadding(0,0,0,0);t.addView(Ui.title(this,"Devedores",26));t.addView(Ui.label(this,"Olá! Aqui está tudo que você precisa."));r.addView(t,new LinearLayout.LayoutParams(0,Ui.dp(this,58),1));
         Button help=Ui.btnDark(this,"Ajuda");help.setOnClickListener(v->showHelp());r.addView(help,new LinearLayout.LayoutParams(Ui.dp(this,70),Ui.dp(this,52)));root.addView(r);Ui.gap(this,root,12);
     }
 
@@ -47,8 +47,8 @@ public class MainActivity extends Activity {
         root.addView(Ui.sectionTitle(this,"O que você quer fazer?"));Ui.gap(this,root,6);
         LinearLayout r1=Ui.row(this),r2=Ui.row(this);
         Button add=Ui.bigBtn(this,"👤  Novo cliente",Ui.GOLD);add.setOnClickListener(v->startActivity(new Intent(this,AddClientActivity.class)));
-        Button pay=Ui.bigBtn(this,"💰  Receber pagamento",Ui.GREEN);pay.setOnClickListener(v->chooseClientForLoan());
-        Button cli=Ui.bigBtn(this,"📒  Ver clientes",Ui.BLUE);cli.setOnClickListener(v->{ if(search!=null){search.requestFocus();} else {Toast.makeText(this,"Role até Clientes",Toast.LENGTH_SHORT).show();}});
+        Button pay=Ui.bigBtn(this,"💰  Receber",Ui.GREEN);pay.setOnClickListener(v->chooseClientForPayment());
+        Button cli=Ui.bigBtn(this,"📒  Clientes",Ui.BLUE);cli.setOnClickListener(v->{ if(clientList!=null && scroll!=null){scroll.post(()->scroll.smoothScrollTo(0,Math.max(0,clientList.getTop()-Ui.dp(this,12))));} });
         Button cal=Ui.bigBtn(this,"📅  Calendário",Ui.PURPLE);cal.setOnClickListener(v->startActivity(new Intent(this,CalendarActivity.class)));
         r1.addView(add,new LinearLayout.LayoutParams(0,Ui.dp(this,76),1));Ui.gap(this,r1,8);r1.addView(pay,new LinearLayout.LayoutParams(0,Ui.dp(this,76),1));
         r2.addView(cli,new LinearLayout.LayoutParams(0,Ui.dp(this,76),1));Ui.gap(this,r2,8);r2.addView(cal,new LinearLayout.LayoutParams(0,Ui.dp(this,76),1));
@@ -87,6 +87,8 @@ public class MainActivity extends Activity {
     void moreSection(){
         root.addView(Ui.sectionTitle(this,"Mais opções"));Ui.gap(this,root,6);LinearLayout r=Ui.row(this);Button rel=Ui.btnDark(this,"Relatórios");rel.setOnClickListener(v->startActivity(new Intent(this,ReportsActivity.class)));Button ex=Ui.btnDark(this,"Backup");ex.setOnClickListener(v->exportBackup());Button im=Ui.btnDark(this,"Restaurar");im.setOnClickListener(v->importBackup());r.addView(rel,new LinearLayout.LayoutParams(0,Ui.dp(this,54),1));Ui.gap(this,r,5);r.addView(ex,new LinearLayout.LayoutParams(0,Ui.dp(this,54),1));Ui.gap(this,r,5);r.addView(im,new LinearLayout.LayoutParams(0,Ui.dp(this,54),1));root.addView(r);Ui.gap(this,root,12);LinearLayout f=Ui.softCard(this,Ui.BLUE);f.addView(Ui.title(this,"Salva automaticamente",15));f.addView(Ui.label(this,"Clientes, fotos, documentos, pagamentos e lembretes ficam guardados neste celular."));root.addView(f);
     }
+
+    void chooseClientForPayment(){if(ds.clients.isEmpty()){startActivity(new Intent(this,AddClientActivity.class));return;}String[] n=new String[ds.clients.size()];for(int i=0;i<ds.clients.size();i++)n[i]=ds.clients.get(i).name;new AlertDialog.Builder(this).setTitle("Quem fez o pagamento?").setMessage("Toque no nome para registrar o recebimento.").setItems(n,(d,w)->{Intent i=new Intent(this,ClientActivity.class);i.putExtra("id",ds.clients.get(w).id);i.putExtra("openPayment",true);startActivity(i);}).show();}
 
     void chooseClientForLoan(){if(ds.clients.isEmpty()){startActivity(new Intent(this,AddClientActivity.class));return;}String[] n=new String[ds.clients.size()];for(int i=0;i<ds.clients.size();i++)n[i]=ds.clients.get(i).name;new AlertDialog.Builder(this).setTitle("Escolha o cliente").setItems(n,(d,w)->{Intent i=new Intent(this,ClientActivity.class);i.putExtra("id",ds.clients.get(w).id);startActivity(i);}).show();}
     void newReminder(){showReminderDialog();}

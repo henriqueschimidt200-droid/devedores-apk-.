@@ -26,22 +26,23 @@ import androidx.core.view.WindowInsetsCompat;
 import java.io.File;
 
 public class Ui {
-    public static final int BG = Color.rgb(7, 10, 15);
-    public static final int SURFACE = Color.rgb(14, 18, 25);
-    public static final int SURFACE_2 = Color.rgb(20, 26, 35);
-    public static final int SURFACE_3 = Color.rgb(28, 35, 46);
-    public static final int BORDER = Color.rgb(43, 51, 64);
-    public static final int MUTED = Color.rgb(148, 160, 177);
-    public static final int WHITE = Color.rgb(245, 247, 251);
-    public static final int GOLD = Color.rgb(245, 190, 59);
-    public static final int GOLD_DARK = Color.rgb(133, 93, 14);
-    public static final int DARK = Color.rgb(42, 48, 58);
-    public static final int GREEN = Color.rgb(63, 207, 133);
-    public static final int RED = Color.rgb(245, 94, 102);
-    public static final int BLUE = Color.rgb(92, 159, 255);
-    public static final int PURPLE = Color.rgb(168, 128, 255);
-    public static final int CYAN = Color.rgb(63, 202, 216);
-    public static final int ORANGE = Color.rgb(255, 149, 77);
+    public static final int BG = Color.rgb(246, 248, 252);
+    public static final int SURFACE = Color.rgb(255, 255, 255);
+    public static final int SURFACE_2 = Color.rgb(242, 245, 250);
+    public static final int SURFACE_3 = Color.rgb(232, 237, 245);
+    public static final int BORDER = Color.rgb(214, 221, 232);
+    public static final int MUTED = Color.rgb(98, 109, 126);
+    public static final int WHITE = Color.rgb(255, 255, 255);
+    public static final int TEXT = Color.rgb(26, 39, 60);
+    public static final int GOLD = Color.rgb(46, 104, 219);
+    public static final int GOLD_DARK = Color.rgb(28, 73, 159);
+    public static final int DARK = Color.rgb(61, 73, 95);
+    public static final int GREEN = Color.rgb(20, 166, 117);
+    public static final int RED = Color.rgb(220, 78, 87);
+    public static final int BLUE = Color.rgb(60, 132, 246);
+    public static final int PURPLE = Color.rgb(124, 92, 230);
+    public static final int CYAN = Color.rgb(20, 157, 169);
+    public static final int ORANGE = Color.rgb(234, 143, 39);
 
     public static int dp(Context c, int n) {
         return (int) (n * c.getResources().getDisplayMetrics().density + 0.5f);
@@ -70,10 +71,11 @@ public class Ui {
         TextView v = new TextView(c);
         v.setText(s);
         v.setTextSize(sp);
-        v.setTextColor(WHITE);
+        v.setTextColor(TEXT);
         v.setGravity(Gravity.CENTER_VERTICAL);
-        v.setPadding(dp(c, 2), dp(c, 4), dp(c, 2), dp(c, 4));
-        v.setIncludeFontPadding(false);
+        v.setPadding(dp(c, 2), dp(c, 6), dp(c, 2), dp(c, 6));
+        v.setIncludeFontPadding(true);
+        v.setLineSpacing(0, 1.05f);
         return v;
     }
 
@@ -111,9 +113,9 @@ public class Ui {
         activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
         try {
             WindowCompat.getInsetsController(activity.getWindow(), activity.getWindow().getDecorView())
-                    .setAppearanceLightStatusBars(false);
+                    .setAppearanceLightStatusBars(true);
             WindowCompat.getInsetsController(activity.getWindow(), activity.getWindow().getDecorView())
-                    .setAppearanceLightNavigationBars(false);
+                    .setAppearanceLightNavigationBars(true);
         } catch (Exception ignored) {}
 
         final int baseLeft = content.getPaddingLeft();
@@ -148,7 +150,8 @@ public class Ui {
         v.setTextColor(textColor);
         v.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
         v.setPadding(dp(c, 11), 0, dp(c, 11), 0);
-        v.setBackground(bg(c, withAlpha(color, 22), 30, withAlpha(color, 90)));
+        v.setBackground(bg(c, withAlpha(color, 28), 30, withAlpha(color, 95)));
+        if (textColor == WHITE) v.setTextColor(TEXT);
         return v;
     }
 
@@ -164,7 +167,7 @@ public class Ui {
 
     public static Button btnDark(Context c, String s) {
         Button b = buttonBase(c, s);
-        b.setTextColor(WHITE);
+        b.setTextColor(TEXT);
         b.setTextSize(15);
         b.setBackground(bg(c, SURFACE_2, 14, BORDER));
         b.setElevation(dp(c, 1));
@@ -174,10 +177,10 @@ public class Ui {
     public static Button bigBtn(Context c, String s, int accent) {
         Button b = buttonBase(c, s);
         b.setTextColor(WHITE);
-        b.setTextSize(17);
+        b.setTextSize(16);
         b.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-        b.setBackground(gradient(c, new int[]{withAlpha(accent, 65), withAlpha(SURFACE_2, 250)}, 18, withAlpha(accent, 110)));
-        b.setMinHeight(dp(c, 70));
+        b.setBackground(gradient(c, new int[]{accent, accent}, 18, withAlpha(accent, 170)));
+        b.setMinHeight(dp(c, 78));
         b.setPadding(dp(c, 14), 0, dp(c, 14), 0);
         return b;
     }
@@ -204,10 +207,12 @@ public class Ui {
         b.setText(s);
         b.setAllCaps(false);
         b.setGravity(Gravity.CENTER);
-        b.setMinHeight(dp(c, 56));
+        b.setMinHeight(dp(c, 60));
         b.setMinWidth(0);
         b.setStateListAnimator(null);
-        b.setPadding(dp(c, 15), 0, dp(c, 15), 0);
+        b.setPadding(dp(c, 15), dp(c, 4), dp(c, 15), dp(c, 4));
+        b.setIncludeFontPadding(true);
+        b.setLineSpacing(0, 1.03f);
         b.setMaxLines(2);
         b.setEllipsize(null);
         return b;
@@ -216,13 +221,15 @@ public class Ui {
     public static EditText field(Context c, String hint) {
         EditText e = new EditText(c);
         e.setHint(hint);
-        e.setTextColor(WHITE);
-        e.setHintTextColor(Color.rgb(104, 115, 132));
+        e.setTextColor(TEXT);
+        e.setHintTextColor(Color.rgb(121, 132, 148));
         e.setTextSize(16);
         e.setSingleLine(false);
+        e.setIncludeFontPadding(true);
+        e.setLineSpacing(0, 1.04f);
         e.setIncludeFontPadding(false);
-        e.setPadding(dp(c, 15), dp(c, 12), dp(c, 15), dp(c, 12));
-        e.setBackground(bg(c, SURFACE_2, 14, BORDER));
+        e.setPadding(dp(c, 15), dp(c, 14), dp(c, 15), dp(c, 14));
+        e.setBackground(bg(c, SURFACE, 14, BORDER));
         return e;
     }
 
@@ -230,14 +237,15 @@ public class Ui {
         EditText e = field(c, hint);
         e.setSingleLine(true);
         e.setTextSize(16);
-        e.setPadding(dp(c, 16), 0, dp(c, 16), 0);
+        e.setPadding(dp(c, 16), dp(c, 4), dp(c, 16), dp(c, 4));
+        e.setIncludeFontPadding(true);
         return e;
     }
 
     public static LinearLayout col(Context c) {
         LinearLayout l = new LinearLayout(c);
         l.setOrientation(LinearLayout.VERTICAL);
-        l.setPadding(dp(c, 20), dp(c, 18), dp(c, 20), dp(c, 42));
+        l.setPadding(dp(c, 20), dp(c, 20), dp(c, 20), dp(c, 72));
         l.setBackgroundColor(BG);
         return l;
     }
@@ -274,14 +282,14 @@ public class Ui {
 
     public static LinearLayout statCard(Context c, String caption, String value, int accent) {
         LinearLayout l = card(c);
-        l.setPadding(dp(c, 14), dp(c, 12), dp(c, 14), dp(c, 12));
+        l.setPadding(dp(c, 14), dp(c, 14), dp(c, 14), dp(c, 14));
         TextView cap = text(c, caption, 10);
         cap.setTextColor(MUTED);
         cap.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
         TextView val = title(c, value, 17);
         val.setTextColor(WHITE);
-        l.addView(cap, new LinearLayout.LayoutParams(-1, dp(c, 22)));
-        l.addView(val, new LinearLayout.LayoutParams(-1, dp(c, 34)));
+        l.addView(cap, new LinearLayout.LayoutParams(-1, dp(c, 24)));
+        l.addView(val, new LinearLayout.LayoutParams(-1, dp(c, 42)));
         View line = new View(c);
         line.setBackground(bg(c, accent, 3, Color.TRANSPARENT));
         l.addView(line, new LinearLayout.LayoutParams(dp(c, 38), dp(c, 3)));
@@ -317,7 +325,7 @@ public class Ui {
         TextView a = eyebrow(c, label);
         TextView b = title(c, value, 14);
         l.addView(a, new LinearLayout.LayoutParams(-1, dp(c, 22)));
-        l.addView(b, new LinearLayout.LayoutParams(-1, dp(c, 34)));
+        l.addView(b, new LinearLayout.LayoutParams(-1, dp(c, 40)));
         return l;
     }
 
