@@ -82,6 +82,12 @@ public class Ui {
     public static TextView title(Context c, String s, int sp) {
         TextView v = text(c, s, sp);
         v.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        // Valores numéricos e títulos ficam ligeiramente mais altos dentro dos cards,
+        // evitando que a parte inferior dos caracteres seja escondida em telas compactas.
+        v.setPadding(dp(c, 2), dp(c, 1), dp(c, 2), dp(c, 10));
+        v.setIncludeFontPadding(true);
+        v.setGravity(Gravity.CENTER_VERTICAL);
+        v.setMinHeight(dp(c, Math.max(34, sp + 18)));
         return v;
     }
 
@@ -245,7 +251,7 @@ public class Ui {
     public static LinearLayout col(Context c) {
         LinearLayout l = new LinearLayout(c);
         l.setOrientation(LinearLayout.VERTICAL);
-        l.setPadding(dp(c, 20), dp(c, 20), dp(c, 20), dp(c, 72));
+        l.setPadding(dp(c, 20), dp(c, 18), dp(c, 20), dp(c, 56));
         l.setBackgroundColor(BG);
         return l;
     }
@@ -289,7 +295,7 @@ public class Ui {
         TextView val = title(c, value, 17);
         val.setTextColor(WHITE);
         l.addView(cap, new LinearLayout.LayoutParams(-1, dp(c, 24)));
-        l.addView(val, new LinearLayout.LayoutParams(-1, dp(c, 42)));
+        l.addView(val, new LinearLayout.LayoutParams(-1, dp(c, 50)));
         View line = new View(c);
         line.setBackground(bg(c, accent, 3, Color.TRANSPARENT));
         l.addView(line, new LinearLayout.LayoutParams(dp(c, 38), dp(c, 3)));
@@ -305,7 +311,7 @@ public class Ui {
         copy.setPadding(dp(c, 10), 0, 0, 0);
         copy.addView(title(c, value, 16));
         copy.addView(label(c, caption));
-        r.addView(copy, new LinearLayout.LayoutParams(0, dp(c, 52), 1));
+        r.addView(copy, new LinearLayout.LayoutParams(0, dp(c, 60), 1));
         card.addView(r);
         return card;
     }
@@ -325,7 +331,7 @@ public class Ui {
         TextView a = eyebrow(c, label);
         TextView b = title(c, value, 14);
         l.addView(a, new LinearLayout.LayoutParams(-1, dp(c, 22)));
-        l.addView(b, new LinearLayout.LayoutParams(-1, dp(c, 40)));
+        l.addView(b, new LinearLayout.LayoutParams(-1, dp(c, 48)));
         return l;
     }
 
