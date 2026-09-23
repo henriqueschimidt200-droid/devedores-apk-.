@@ -1,4 +1,4 @@
-name: Devedores 5.3 - Gerar APK
+name: Devedores 5.3 - APK
 
 on:
   workflow_dispatch:
@@ -11,62 +11,63 @@ permissions:
 
 jobs:
   build:
-    name: Compilar APK Devedores 5.3
     runs-on: ubuntu-24.04
 
     steps:
       - name: Baixar projeto
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Configurar Java 17
-        uses: actions/setup-java@v4
+      - name: Java 17
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Gradle 8.10.2
+        uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '8.10.2'
           cache-provider: basic
 
-      - name: Verificar projeto
+      - name: Configurar Android SDK
         run: |
-          echo "Arquivos do projeto:"
-          ls -la
+          echo "ANDROID_HOME=${ANDROID_HOME}" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=${ANDROID_HOME}" >> "$GITHUB_ENV"
 
-          echo "Pasta app:"
-          ls -la app
+          echo "Android SDK:"
+          echo "$ANDROID_HOME"
 
-          test -f settings.gradle || test -f settings.gradle.kts
-          test -f build.gradle || test -f build.gradle.kts
-          test -f app/build.gradle || test -f app/build.gradle.kts
+          test -d "$ANDROID_HOME/platforms/android-35"
+          test -d "$ANDROID_HOME/build-tools/35.0.0"
+
+          echo "SDK Android 35 encontrado."
 
       - name: Configurar AndroidX
         run: |
           touch gradle.properties
 
-          grep -q "^android.useAndroidX=true" gradle.properties || \
-            echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
 
-          grep -q "^android.enableJetifier=true" gradle.properties || \
-            echo "android.enableJetifier=true" >> gradle.properties
-
-          echo "gradle.properties:"
+          echo "=== gradle.properties ==="
           cat gradle.properties
 
-      - name: Configurar Android SDK
+      - name: Criar local.properties
         run: |
-          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          printf "sdk.dir=%s\n" "$ANDROID_HOME" > local.properties
+          cat local.properties
 
-          echo "Android SDK: $SDK"
+      - name: Verificar projeto
+        run: |
+          echo "=== RAIZ ==="
+          ls -la
 
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          echo "=== APP ==="
+          ls -la app
 
-          sdkmanager \
-            "platform-tools" \
-            "platforms;android-35" \
-            "build-tools;35.0.0"
+          test -f settings.gradle
+          test -f build.gradle
+          test -f app/build.gradle
 
       - name: Compilar APK
         run: |
@@ -74,15 +75,27 @@ jobs:
             --stacktrace \
             --no-daemon
 
-      - name: Verificar APK
+      - name: Procurar APK
+        if: always()
         run: |
-          test -f app/build/outputs/apk/debug/app-debug.apk
-          ls -lh app/build/outputs/apk/debug/app-debug.apk
+          echo "=== APKs ==="
+          find . -type f -name "*.apk" -print || true
 
-      - name: Upload do APK
+      - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Devedores-5.3-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Upload log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Devedores-5.3-LOG
+          path: |
+            ~/.gradle/daemon/*/daemon-*.out.log
+          if-no-files-found: ignore
+          retention-days: 14
