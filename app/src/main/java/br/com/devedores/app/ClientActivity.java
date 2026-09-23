@@ -42,8 +42,8 @@ public class ClientActivity extends Activity {
         for(Models.Loan l:c.loans){paid+=l.paid();bal+=l.balance();total+=l.total;for(int i=0;i<l.installments;i++)if(!l.installmentPaid(i)&&l.dueAt(i)<System.currentTimeMillis())overdue++;}
         LinearLayout hero=Ui.heroCard(this,overdue>0?Ui.RED:(bal>0?Ui.GOLD:Ui.GREEN));
         LinearLayout hr=Ui.row(this);
-        View photo=(c.profileImagePath!=null&&!c.profileImagePath.isEmpty())?Ui.profileImage(this,c.profileImagePath,c.name,70):Ui.avatar(this,c.name);
-        hr.addView(photo,new LinearLayout.LayoutParams(Ui.dp(this,70),Ui.dp(this,70)));
+        View profileView=(c.profileImagePath!=null&&!c.profileImagePath.isEmpty())?Ui.profileImage(this,c.profileImagePath,c.name,70):Ui.avatar(this,c.name);
+        hr.addView(profileView,new LinearLayout.LayoutParams(Ui.dp(this,70),Ui.dp(this,70)));
         LinearLayout htxt=Ui.col(this);htxt.setPadding(Ui.dp(this,13),0,0,0);htxt.addView(Ui.eyebrow(this,overdue>0?"ATENÇÃO • HÁ ATRASOS":bal>0?"CONTRATO(S) EM ABERTO":"TUDO QUITADO"));htxt.addView(Ui.title(this,money(bal),28));htxt.addView(Ui.label(this,"saldo atual • total contratado "+money(total)));hr.addView(htxt,new LinearLayout.LayoutParams(0,Ui.dp(this,78),1));hero.addView(hr);
         LinearLayout hf=Ui.row(this);hf.addView(Ui.label(this,"Recebido: "+money(paid)),new LinearLayout.LayoutParams(0,Ui.dp(this,30),1));hf.addView(Ui.pill(this,c.loans.size()+" contrato(s)",Ui.BLUE,Ui.WHITE));hero.addView(hf);
         LinearLayout photoActions=Ui.row(this);Button pf=Ui.btnGhost(this,"📷 Foto");pf.setOnClickListener(v->pickProfilePhoto());Button ga=Ui.btnGhost(this,"🖼 Galeria");ga.setOnClickListener(v->showImagePicker());photoActions.addView(pf,new LinearLayout.LayoutParams(0,Ui.dp(this,40),1));Ui.gap(this,photoActions,5);photoActions.addView(ga,new LinearLayout.LayoutParams(0,Ui.dp(this,40),1));hero.addView(photoActions);
@@ -51,11 +51,11 @@ public class ClientActivity extends Activity {
 
         LinearLayout easy=Ui.softCard(this,Ui.BLUE);easy.addView(Ui.title(this,"Ações rápidas",19));easy.addView(Ui.label(this,"Escolha o que precisa fazer agora."));Ui.gap(this,easy,7);
         LinearLayout e1=Ui.row(this),e2=Ui.row(this);
-        Button photo=Ui.bigBtn(this,"📷  Adicionar fotos",Ui.BLUE);photo.setOnClickListener(v->showImagePicker());
+        Button addPhoto=Ui.bigBtn(this,"📷  Adicionar fotos",Ui.BLUE);addPhoto.setOnClickListener(v->showImagePicker());
         Button docs=Ui.bigBtn(this,"📁  Abrir documentos",Ui.PURPLE);docs.setOnClickListener(v->showFolderDialog("Outros"));
         Button loan=Ui.bigBtn(this,"💰  Novo empréstimo",Ui.GOLD);loan.setOnClickListener(v->{Intent i=new Intent(this,AddLoanActivity.class);i.putExtra("clientId",c.id);startActivity(i);});
         Button pay=Ui.bigBtn(this,"✅  Registrar pagamento",Ui.GREEN);pay.setOnClickListener(v->chooseLoanForPayment());
-        e1.addView(photo,new LinearLayout.LayoutParams(0,Ui.dp(this,72),1));Ui.gap(this,e1,7);e1.addView(docs,new LinearLayout.LayoutParams(0,Ui.dp(this,72),1));
+        e1.addView(addPhoto,new LinearLayout.LayoutParams(0,Ui.dp(this,72),1));Ui.gap(this,e1,7);e1.addView(docs,new LinearLayout.LayoutParams(0,Ui.dp(this,72),1));
         e2.addView(loan,new LinearLayout.LayoutParams(0,Ui.dp(this,72),1));Ui.gap(this,e2,7);e2.addView(pay,new LinearLayout.LayoutParams(0,Ui.dp(this,72),1));
         easy.addView(e1);Ui.gap(this,easy,7);easy.addView(e2);root.addView(easy);Ui.gap(this,root,10);
         LinearLayout contact=Ui.row(this);Button wa=Ui.btnDark(this,"WhatsApp");wa.setOnClickListener(v->openWhatsApp());Button call=Ui.btnDark(this,"Ligar");call.setOnClickListener(v->callClient());Button note=Ui.btnDark(this,"Anotação");note.setOnClickListener(v->editNote());contact.addView(wa,new LinearLayout.LayoutParams(0,Ui.dp(this,44),1));Ui.gap(this,contact,5);contact.addView(call,new LinearLayout.LayoutParams(0,Ui.dp(this,44),1));Ui.gap(this,contact,5);contact.addView(note,new LinearLayout.LayoutParams(0,Ui.dp(this,44),1));root.addView(contact);Ui.gap(this,root,16);
